@@ -1,21 +1,31 @@
 
 module.exports = function(app){
 	var validator = require('validator');
+	var URL = require('../models/models');
 
 
 	app.use('/', function(req, res) {
-		//pull url from request
+		//Pull url from request
 		var originalURL = req.url.substring(1);
-		//validate URL
 		console.log(originalURL);
+
+		//If URL is valid
 		if(validator.isURL(originalURL, {require_protocol: true})) {
-			res.end(JSON.stringify({
-				originalURL: originalURL,
-				shortURL: 1
-			}));
+
+			//Call serchByValidUrl method
+			URL.searchByValidUrl(req, res, originalURL);
+
 		}
+		//If url is an integer  
+		else if (validator.isInt(originalURL)) {
+			//Call serchByIntUrl method
+			URL.findByIntUrl(req, res, originalURL);
+		}
+		//If URL is invalid and not an integer	
 		else {
-			res.end("URL is invalid");
+			res.end("Not a valid URL");
 		}
+	
 	});
+
 }
