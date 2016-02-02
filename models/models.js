@@ -8,11 +8,13 @@ var urlSchema = new Schema({
 	original: String,
 	shortened: String
 });
+//Heroku url
 var host = "https://fccurlshortner.herokuapp.com/";
 
 //create SavedURL model
 var SavedURLs = mongoose.model('SavedURLs', urlSchema);
 
+//Method for searching for valid url
 SavedURLs.searchByValidUrl = function(req, res, name) {
 
 	//Query db by provided URL
@@ -21,7 +23,6 @@ SavedURLs.searchByValidUrl = function(req, res, name) {
 
 		//if found send results
 		if(url.length) {
-			console.log("URL exists");
 			
 			res.end(JSON.stringify({
 				originalURL: url[0].original,
@@ -36,17 +37,13 @@ SavedURLs.searchByValidUrl = function(req, res, name) {
 
 				//new short url is current count + 1
 				shortURL = (count + 1).toString();
-				console.log(shortURL);
 
 				//create new entry in URL collection
 				newURL = new SavedURLs({original: name, shortened: shortURL});
 				//save entry to db
 				newURL.save(function(err) {
-					if(err) {
+					if(err)
 						return (err)
-					} else {
-						console.log("URL Saved!: " + newURL);
-					}
 				});
 				//Send response with new info to client
 				res.end(JSON.stringify({
@@ -58,6 +55,7 @@ SavedURLs.searchByValidUrl = function(req, res, name) {
 	});
 }
 
+//Method for searching for saved url by provided integer
 SavedURLs.findByIntUrl = function(req, res, int) {
 	//Query db for provided short URL
 	SavedURLs.find({shortened: int}, function(err, urls) {
@@ -65,7 +63,6 @@ SavedURLs.findByIntUrl = function(req, res, int) {
 
 		//If short URL found
 		if(urls.length) {
-			console.log(host + urls[0].original)
 
 			//Redirect to appropriate location
 			res.redirect(urls[0].original);
@@ -73,7 +70,7 @@ SavedURLs.findByIntUrl = function(req, res, int) {
 		}
 		//If no match is found
 		else {
-			res.end("No short URL matching");
+			res.end("No short URL matching your request");
 		}
 	});
 }

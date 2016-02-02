@@ -7,7 +7,6 @@ module.exports = function(app){
 	app.use('/', function(req, res) {
 		//Pull url from request
 		var originalURL = req.url.substring(1);
-		console.log(originalURL);
 
 		//If URL is valid
 		if(validator.isURL(originalURL, {require_protocol: true})) {
